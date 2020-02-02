@@ -58,32 +58,50 @@ namespace predicate.builder.net
 
         BinaryExpression binaryExpr = (BinaryExpression)binaryExpMethod.Invoke(null, new object[] { parameterExpr, constantExpr }); // TODO DRY !
 
-        Expression<Func<T, bool>> @delegate = Expression.Lambda<Func<T, bool>>(body: binaryExpr, parameters: parameterExpr); // TODO Extract method
-        return @delegate;        
+        Expression<Func<T, bool>> expression = Expression.Lambda<Func<T, bool>>(body: binaryExpr, parameters: parameterExpr); // TODO Extract method
+        return expression;
       }
       else
       {
 
         var leftValueTokens = leftValue.Split('.');
 
-        if(leftValueTokens.Count() != 2) {
+        if (leftValueTokens.Count() != 2)
+        {
           throw new ArgumentOutOfRangeException(); // TODO
         }
 
         var paramName = leftValueTokens.First();  // v
         var paramPropName = leftValueTokens.Skip(1).First(); // Length like fields or Contains() like methods// TODO check if field or method like Contains(foo)
 
-        int rightValueTyped = (int)Convert.ChangeType(rightValue, typeof(int)); // TODO hardcoded
+        var memberInfos = paramType.GetMember(paramPropName, BindingFlags.Public | BindingFlags.Instance);
+        if (!memberInfos.Any())
+        {
+          throw new MissingMemberException(paramType.Name, paramPropName);
+        }
+
+        var memberInfo = memberInfos.Single();
+
+        /*
+          get return type of 
+        */
+
         ParameterExpression parameterExpression = Expression.Parameter(paramType, paramName);
 
-        MemberExpression memberExpr = Expression.Property(parameterExpression, typeof(string).GetProperty("Length"));  // TODO Hardcoded
-        ConstantExpression constantExpr = Expression.Constant(rightValueTyped, typeof(int)); // TODO hardcoded
+      // (PropertyInfo)memberInfo).GetType()
+        MemberExpression memberExpr = Expression.Property(parameterExpression, typeof(string).GetProperty(paramPropName)); 
+
+        var typeofMember = ((System.Reflection.PropertyInfo)memberInfo).PropertyType;
+
+        object constantRightValue = Convert.ChangeType(rightValue, typeofMember);
+
+        ConstantExpression constantExpr = Expression.Constant(constantRightValue);
 
         BinaryExpression binaryExpr = (BinaryExpression)binaryExpMethod.Invoke(null, new object[] { memberExpr, constantExpr }); // TODO DRY !
 
-        Expression<Func<T, bool>> @delegate = Expression.Lambda<Func<T, bool>>(body: binaryExpr, parameters: parameterExpression); // TODO Extract method
+        Expression<Func<T, bool>> expression = Expression.Lambda<Func<T, bool>>(body: binaryExpr, parameters: parameterExpression); // TODO Extract method
 
-        return @delegate;
+        return expression;
       }
     }
 
