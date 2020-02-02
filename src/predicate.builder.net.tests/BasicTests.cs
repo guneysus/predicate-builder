@@ -63,6 +63,33 @@ namespace predicate.builder.net.tests
       Assert.True(predicate(trueValue));
       Assert.False(predicate(falseValue));
     }
+
+
+    [Theory]
+    [InlineData("v.Length Equal 3", "abc", "b")]
+    [InlineData("v.Length Equal 5", "abcde", "")]
+
+    [InlineData("v.Length NotEqual 3", "", "abc")]
+    [InlineData("v.Length NotEqual 5", "", "abcde")]
+
+    [InlineData("v.Length GreaterThan 3", "abcd", "")]
+    [InlineData("v.Length GreaterThan 5", "abcdef", "")]
+
+    [InlineData("v.Length GreaterThanOrEqual 3", "abc", "")]
+    [InlineData("v.Length GreaterThanOrEqual 5", "abcde", "")]
+
+    [InlineData("v.Length LessThan 3", "ab", "abcdef")]
+    [InlineData("v.Length LessThan 5", "abcd", "abcdef")]
+
+    [InlineData("v.Length LessThanOrEqual 3", "abc", "abcdef")]
+    [InlineData("v.Length LessThanOrEqual 5", "abcde", "abcdef")]
+    public void String_Length_Tests(string command, string trueValue, string falseValue)
+    {
+      var predicate = PredicateBuilder.Create<string>(command);
+
+      Assert.True(predicate(trueValue));
+      Assert.False(predicate(falseValue));      
+    }
   }
 
 }

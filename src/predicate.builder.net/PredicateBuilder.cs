@@ -10,11 +10,6 @@ namespace predicate.builder.net
   {
     public static Func<T, bool> Create<T>(string command)
     {
-
-      /*
-      x < 5
-      */
-
       var tokens = Tokens(command);
 
       Expression<Func<T, bool>> expression = BinaryExpressionFactory<T>(tokens);
@@ -39,13 +34,14 @@ namespace predicate.builder.net
 
       Type paramType = typeof(T);
 
-      var paramName = tokens.First();
-      var operatorValue = tokens.Skip(1).First(); // TODO use with reflection
+      var leftValue = tokens.First();
+      var operatorValue = tokens.Skip(1).First();
       var rightValue = tokens.Skip(2).First();
-      T rightValueTyped = (T)Convert.ChangeType(rightValue, paramType);
+
 
       Type exprType = typeof(Expression);
 
+      // TODO Extract method
       var binaryExpMethod = exprType.GetMethod(operatorValue,
         BindingFlags.Public | BindingFlags.Static,
         null,
@@ -53,15 +49,42 @@ namespace predicate.builder.net
         new Type[] { exprType, exprType },
         null);
 
+      if (!leftValue.Contains('.'))
+      {
+        T rightValueTyped = (T)Convert.ChangeType(rightValue, paramType);
 
-      ParameterExpression paramExpr = Expression.Parameter(paramType, paramName);
+        ParameterExpression parameterExpr = Expression.Parameter(paramType, leftValue);
+        ConstantExpression constantExpr = Expression.Constant(rightValueTyped, paramType);
 
-      ConstantExpression rightExpr = Expression.Constant(rightValueTyped, paramType); // TODO Use overload and cast/parse to correct type
+        BinaryExpression binaryExpr = (BinaryExpression)binaryExpMethod.Invoke(null, new object[] { parameterExpr, constantExpr }); // TODO DRY !
 
-      BinaryExpression binaryExpr = (BinaryExpression)binaryExpMethod.Invoke(null, new object[] { paramExpr, rightExpr }); // TODO Implement a method with Reflection
+        Expression<Func<T, bool>> @delegate = Expression.Lambda<Func<T, bool>>(body: binaryExpr, parameters: parameterExpr); // TODO Extract method
+        return @delegate;        
+      }
+      else
+      {
 
-      Expression<Func<T, bool>> lambda = Expression.Lambda<Func<T, bool>>(binaryExpr, paramExpr);
-      return lambda;
+        var leftValueTokens = leftValue.Split('.');
+
+        if(leftValueTokens.Count() != 2) {
+          throw new ArgumentOutOfRangeException(); // TODO
+        }
+
+        var paramName = leftValueTokens.First();  // v
+        var paramPropName = leftValueTokens.Skip(1).First(); // Length like fields or Contains() like methods// TODO check if field or method like Contains(foo)
+
+        int rightValueTyped = (int)Convert.ChangeType(rightValue, typeof(int)); // TODO hardcoded
+        ParameterExpression parameterExpression = Expression.Parameter(paramType, paramName);
+
+        MemberExpression memberExpr = Expression.Property(parameterExpression, typeof(string).GetProperty("Length"));  // TODO Hardcoded
+        ConstantExpression constantExpr = Expression.Constant(rightValueTyped, typeof(int)); // TODO hardcoded
+
+        BinaryExpression binaryExpr = (BinaryExpression)binaryExpMethod.Invoke(null, new object[] { memberExpr, constantExpr }); // TODO DRY !
+
+        Expression<Func<T, bool>> @delegate = Expression.Lambda<Func<T, bool>>(body: binaryExpr, parameters: parameterExpression); // TODO Extract method
+
+        return @delegate;
+      }
     }
 
     static IEnumerable<string> Tokens(string command)
