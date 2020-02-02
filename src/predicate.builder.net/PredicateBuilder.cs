@@ -27,17 +27,24 @@ namespace predicate.builder.net
     static Expression<Func<T, bool>> BinaryExpressionFactory<T>(IEnumerable<string> tokens)
     {
 
-      if (tokens.Count() != 3)
-      {
-        throw new IndexOutOfRangeException(nameof(tokens));
-      }
-
       Type paramType = typeof(T);
 
       var leftValue = tokens.First();
       var operatorValue = tokens.Skip(1).First();
-      var rightValue = tokens.Skip(2).First();
+      var rightValue = tokens.Skip(2).FirstOrDefault();
 
+
+      switch (operatorValue)
+      {
+        case "StartsWith":
+        case "EndsWith":
+        case "In":
+        case "NotIn":
+        case "Contains":
+        case "IsNull":
+        case "IsNotNull":
+          throw new NotImplementedException();
+      }
 
       Type exprType = typeof(Expression);
 
@@ -51,6 +58,11 @@ namespace predicate.builder.net
 
       if (!leftValue.Contains('.'))
       {
+        if (rightValue.StartsWith("["))
+        {
+          throw new NotImplementedException();
+        }
+
         T rightValueTyped = (T)Convert.ChangeType(rightValue, paramType);
 
         ParameterExpression parameterExpr = Expression.Parameter(paramType, leftValue);
@@ -112,7 +124,7 @@ namespace predicate.builder.net
 
     static IEnumerable<string> Tokens(string command)
     {
-      return command.Split(' ');
+      return command.Split();
     }
   }
 

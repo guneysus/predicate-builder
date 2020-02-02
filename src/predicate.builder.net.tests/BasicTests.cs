@@ -65,6 +65,26 @@ namespace predicate.builder.net.tests
     }
 
     [Theory]
+    [InlineData("x In [1,2,3]", 3, 0)]
+    public void Int_In_Tests(string command, int trueValue, int falseValue)
+    {
+      var predicate = PredicateBuilder.Create<int>(command);
+
+      Assert.True(predicate(trueValue));
+      Assert.False(predicate(falseValue));
+    }
+
+    [Theory]
+    [InlineData("x NotIn [1,2,3]", 5, 1)]
+    public void Int_NotIn_Tests(string command, int trueValue, int falseValue)
+    {
+      var predicate = PredicateBuilder.Create<int>(command);
+
+      Assert.True(predicate(trueValue));
+      Assert.False(predicate(falseValue));
+    }    
+
+    [Theory]
     [InlineData("x Equal a", "a", "")]
     [InlineData("x Equal b", "b", "")]
 
@@ -77,6 +97,70 @@ namespace predicate.builder.net.tests
       Assert.True(predicate(trueValue));
       Assert.False(predicate(falseValue));
     }
+
+    [Theory]
+    [InlineData("x IsNull", null, "lorem")]
+    [InlineData("x IsNotNull", "lorem", null)]
+    public void String_Null_Tests(string command, string trueValue, string falseValue)
+    {
+      var predicate = PredicateBuilder.Create<string>(command);
+
+      Assert.True(predicate(trueValue));
+      Assert.False(predicate(falseValue));
+    }
+
+    [Theory]
+    [InlineData("x Contains a", "apple", "melon")]
+    [InlineData("x Contains a", "water", "berries")]
+    public void String_Contains_Tests(string command, string trueValue, string falseValue)
+    {
+      var predicate = PredicateBuilder.Create<string>(command);
+
+      Assert.True(predicate(trueValue));
+      Assert.False(predicate(falseValue));
+    }
+
+    [Theory]
+    [InlineData("x StartsWith a", "Apple", "peach")]
+    [InlineData("x StartsWith water", "Watermelon", "apricot")]
+    public void String_StartsWith_Tests(string command, string trueValue, string falseValue)
+    {
+      var predicate = PredicateBuilder.Create<string>(command);
+
+      Assert.True(predicate(trueValue));
+      Assert.False(predicate(falseValue));
+    }
+
+    [Theory]
+    [InlineData("x EndsWith e", "Apple", "grapes")]
+    [InlineData("x EndsWith na", "Banana", "Avocado")]
+    public void String_EndsWith_Tests(string command, string trueValue, string falseValue)
+    {
+      var predicate = PredicateBuilder.Create<string>(command);
+
+      Assert.True(predicate(trueValue));
+      Assert.False(predicate(falseValue));
+    }
+
+    [Theory]
+    [InlineData("x In [Apple,Orange,Melon]", "apple", "Peach")]
+    public void String_In_Tests(string command, string trueValue, string falseValue)
+    {
+      var predicate = PredicateBuilder.Create<string>(command);
+
+      Assert.True(predicate(trueValue));
+      Assert.False(predicate(falseValue));
+    }
+
+    [Theory]
+    [InlineData("x In [Apple,Orange,Melon]", "Peach", "apple")]
+    public void String_NotIn_Tests(string command, string trueValue, string falseValue)
+    {
+      var predicate = PredicateBuilder.Create<string>(command);
+
+      Assert.True(predicate(trueValue));
+      Assert.False(predicate(falseValue));
+    }                                    
 
     [Theory]
     [InlineData("v.Length Equal 3", "abc", "b")]
@@ -101,9 +185,9 @@ namespace predicate.builder.net.tests
       var predicate = PredicateBuilder.Create<string>(command);
 
       Assert.True(predicate(trueValue));
-      Assert.False(predicate(falseValue));      
+      Assert.False(predicate(falseValue));
     }
- 
+
   }
 
 }

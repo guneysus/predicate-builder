@@ -1,4 +1,4 @@
-default: build
+default: test
 
 build:
 	$(MAKE) -C src build
