@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace predicate.builder.net
 {
@@ -16,50 +17,55 @@ namespace predicate.builder.net
 
       var tokens = Tokens(command);
 
-      Expression<Func<T, bool>> expression = CreateLambda<T>(command);
+      Expression<Func<T, bool>> expression = BinaryExpressionFactory<T>(tokens);
       Func<T, bool> func = expression.Compile();
       return func;
     }
 
-    public static Expression<Func<T, bool>> CreateExpression<T>(string command)
+    static Expression<Func<T, bool>> ExpressionFactory<T>(string command)
     {
-      Expression<Func<T, bool>> expression = CreateLambda<T>(command);
+      var tokens = Tokens(command);
+      Expression<Func<T, bool>> expression = BinaryExpressionFactory<T>(tokens);
       return expression;
     }
 
-
-    public static Expression<Func<T, bool>> CreateLambda<T>(string command)
+    static Expression<Func<T, bool>> BinaryExpressionFactory<T>(IEnumerable<string> tokens)
     {
-      ParameterExpression param = Expression.Parameter(typeof(T), "x");
-      ConstantExpression right = Expression.Constant(3);
-      BinaryExpression exp = Expression.LessThan(param, right);
 
-      Expression<Func<T, bool>> lambda = Expression.Lambda<Func<T, bool>>(exp, param);
-      return lambda;
-    }
-
-    public static Expression<Func<T, bool>> SimpleLambda<T>(IEnumerable<string> tokens) {
-      
-      if(tokens.Count() != 3) {
+      if (tokens.Count() != 3)
+      {
         throw new IndexOutOfRangeException(nameof(tokens));
       }
 
-      Type type = typeof(T);
+      Type paramType = typeof(T);
 
       var paramName = tokens.First();
-      var operatorValue = tokens.Skip(1).First();
+      var operatorValue = tokens.Skip(1).First(); // TODO use with reflection
       var rightValue = tokens.Skip(2).First();
+      T rightValueTyped = (T)Convert.ChangeType(rightValue, paramType);
 
-      ParameterExpression param = Expression.Parameter(type, paramName);
-      ConstantExpression right = Expression.Constant(rightValue, type);
+      Type exprType = typeof(Expression);
 
-      BinaryExpression exp = Expression.LessThan(param, right); // TODO Implement a method with Reflection
+      var binaryExpMethod = exprType.GetMethod(operatorValue,
+        BindingFlags.Public | BindingFlags.Static,
+        null,
+        CallingConventions.Any,
+        new Type[] { exprType, exprType },
+        null);
 
-      Expression<Func<T, bool>> lambda = Expression.Lambda<Func<T, bool>>(exp, param);
-      return lambda;      
+
+      ParameterExpression paramExpr = Expression.Parameter(paramType, paramName);
+
+      ConstantExpression rightExpr = Expression.Constant(rightValueTyped, paramType); // TODO Use overload and cast/parse to correct type
+
+      BinaryExpression binaryExpr = (BinaryExpression)binaryExpMethod.Invoke(null, new object[] { paramExpr, rightExpr }); // TODO Implement a method with Reflection
+
+      Expression<Func<T, bool>> lambda = Expression.Lambda<Func<T, bool>>(binaryExpr, paramExpr);
+      return lambda;
     }
 
-    static IEnumerable<string> Tokens(string command) {
+    static IEnumerable<string> Tokens(string command)
+    {
       return command.Split(' ');
     }
   }

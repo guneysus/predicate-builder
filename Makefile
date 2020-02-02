@@ -1,7 +1,9 @@
-default: test
+default: build
 
+build:
+	$(MAKE) -C src build
 
 test:
-	dotnet test src/predicate.builder.net.tests/
+	$(MAKE) -C src test
 
-.PHONY: default test
+.PHONY: default build test

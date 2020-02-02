@@ -17,11 +17,7 @@ namespace predicate.builder.net.tests
     public BasicTests(ITestOutputHelper output)
     {
       this.output = output;
-    }
-
-    [Fact]
-    public void Simple_Predicate_Experiments()
-    {
+      /*
       var list = new List<int>() { 1, 2, 3, 4, 5 };
 
       var command = "x => x < 3";
@@ -32,15 +28,15 @@ namespace predicate.builder.net.tests
 
       var queried = queryable.Where(predicate);
 
-      var q = queryable.Provider.CreateQuery(PredicateBuilder.CreateExpression<int>(command));
+      Expression<Func<int, bool>> expression = PredicateBuilder.ExpressionFactory<int>(command);
+      var q = queryable.Provider.CreateQuery(expression);
+
       foreach (var item in q)
       {
         output.WriteLine(item.ToString());
       }
-
-      Assert.Equal(0, queried.Except(new int[] { 1, 2 }).Count());
+      */
     }
-
 
     [Theory]
     [InlineData("x Equal 3", 3, 0)]
