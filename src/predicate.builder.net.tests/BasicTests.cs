@@ -56,7 +56,7 @@ namespace predicate.builder.net.tests
 
     [InlineData("x LessThanOrEqual 3", 3, 99)]
     [InlineData("x LessThanOrEqual 5", 5, 99)]
-    public void Int_Equal_Tests(string command, int trueValue, int falseValue)
+    public void Int_BinaryExpressions_Tests(string command, int trueValue, int falseValue)
     {
       var predicate = PredicateBuilder.Create<int>(command);
 
@@ -64,6 +64,19 @@ namespace predicate.builder.net.tests
       Assert.False(predicate(falseValue));
     }
 
+    [Theory]
+    [InlineData("x Equal a", "a", "")]
+    [InlineData("x Equal b", "b", "")]
+
+    [InlineData("x NotEqual a", "", "a")]
+    [InlineData("x NotEqual b", "", "b")]
+    public void String_BinaryExpressions_Tests(string command, string trueValue, string falseValue)
+    {
+      var predicate = PredicateBuilder.Create<string>(command);
+
+      Assert.True(predicate(trueValue));
+      Assert.False(predicate(falseValue));
+    }
 
     [Theory]
     [InlineData("v.Length Equal 3", "abc", "b")]
@@ -90,6 +103,7 @@ namespace predicate.builder.net.tests
       Assert.True(predicate(trueValue));
       Assert.False(predicate(falseValue));      
     }
+ 
   }
 
 }
