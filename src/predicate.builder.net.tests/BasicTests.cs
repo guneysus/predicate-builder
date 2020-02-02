@@ -32,12 +32,40 @@ namespace predicate.builder.net.tests
 
       var queried = queryable.Where(predicate);
 
-      foreach (var item in queried)
+      var q = queryable.Provider.CreateQuery(PredicateBuilder.CreateExpression<int>(command));
+      foreach (var item in q)
       {
         output.WriteLine(item.ToString());
       }
 
       Assert.Equal(0, queried.Except(new int[] { 1, 2 }).Count());
+    }
+
+
+    [Theory]
+    [InlineData("x Equal 3", 3, 0)]
+    [InlineData("x Equal 5", 5, 0)]
+
+    [InlineData("x NotEqual 3", 0, 3)]
+    [InlineData("x NotEqual 5", 0, 5)]
+
+    [InlineData("x GreaterThan 3", 4, 0)]
+    [InlineData("x GreaterThan 5", 6, 0)]
+
+    [InlineData("x GreaterThanOrEqual 3", 3, 0)]
+    [InlineData("x GreaterThanOrEqual 5", 5, 0)]
+
+    [InlineData("x LessThan 3", 2, 99)]
+    [InlineData("x LessThan 5", 4, 99)]
+
+    [InlineData("x LessThanOrEqual 3", 3, 99)]
+    [InlineData("x LessThanOrEqual 5", 5, 99)]
+    public void Int_Equal_Tests(string command, int trueValue, int falseValue)
+    {
+      var predicate = PredicateBuilder.Create<int>(command);
+
+      Assert.True(predicate(trueValue));
+      Assert.False(predicate(falseValue));
     }
   }
 
