@@ -24,6 +24,8 @@ namespace predicate_builder_tests
             new object[] { "Birthdate.Month = 8", Person.New(Birthdate: new DateTime(2000, 8 ,1)), true },
             new object[] { "Birthdate.Month = 8 AND Birthdate.Year = 2000", Person.New(Birthdate: new DateTime(2000, 8 ,1)), true },
             new object[] { "Birthdate.Month = 8 AND Birthdate.Year = 2000", Person.New(Birthdate: new DateTime(2001, 8 ,1)), false },
+            new object[] { "Birthdate.Month = 8 AND Birthdate.Year = 2000 AND Age = 30", Person.New(Birthdate: new DateTime(2000, 8 ,1), Age: 30), true },
+            new object[] { "Birthdate.Month = 8 AND Birthdate.Year = 2000 AND Age = 31", Person.New(Birthdate: new DateTime(2000, 8 ,1), Age: 30), false },
 
         };
 
