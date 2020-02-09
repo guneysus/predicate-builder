@@ -9,7 +9,7 @@ namespace predicate_builder_tests.Models
         public int Id { get; set; }
         public string Name { get; set; }
         public int Age { get; set; }
-        public DateTime BirthDate { get; set; }
+        public DateTime Birthdate { get; set; }
 
         public decimal Salary { get; set; }
         
@@ -17,26 +17,17 @@ namespace predicate_builder_tests.Models
             int Id = default(int), 
             string Name = default(string), 
             int Age = default(int), 
-            DateTime BirthDate =default(DateTime), 
+            DateTime Birthdate =default(DateTime), 
             decimal Salary = default(decimal))
         {
             return new Person()
             {
               Id = Id,
               Age = Age,
-              BirthDate = BirthDate,
+              Birthdate = Birthdate,
               Name = Name,
               Salary = Salary
             };
-        }
-    }
-
-    public static class Db {
-        public static IQueryable<Person> People { get; set; } = Db.PeopleList.AsQueryable();
-        public static List<Person> PeopleList { get; set; } = new List<Person>();
-
-        static Db() {
-
         }
     }
 }

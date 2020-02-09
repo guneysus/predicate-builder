@@ -45,9 +45,9 @@ namespace predicate.builder.net
                 tokens.ElementAt(1), tokens.ElementAt(2));
 
             Type type = typeof(T);
-            PropertyInfo prop = type.GetProperty(propName); // TODO GetMember, GetField or GetProperty
+            PropertyInfo prop = GetProperty(propName, type);
             object rightValueTyped = default(object);
-            Expression leftExpression;
+            Expression leftExpression = default(Expression);
 
             if (propName == string.Intern("@"))
             {
@@ -56,16 +56,44 @@ namespace predicate.builder.net
             }
             else
             {
-                if (rightValue == string.Intern("null"))
+                var nestedProps = propName.Split(new string[] {
+                    string.Intern(".")
+                }, StringSplitOptions.RemoveEmptyEntries);
+
+                if (nestedProps.Count() > 1)
                 {
-                    rightValueTyped = null;
+                    leftExpression = t;
+                    foreach (var member in nestedProps)
+                    {
+                        leftExpression = Expression.PropertyOrField(leftExpression, member);
+                    }
+
+                    Type lastMemberType = typeof(T);
+
+
+                    for (int i = 0; i < nestedProps.Length; i++)
+                    {
+                        string nestedPropname = nestedProps.Skip(i).First();
+                        lastMemberType = GetProperty(nestedPropname, lastMemberType).PropertyType;
+                    }
+
+                    rightValueTyped = Convert.ChangeType(rightValue, lastMemberType);
                 }
                 else
                 {
-                    rightValueTyped = Convert.ChangeType(rightValue, prop.PropertyType);
-                }
+                    if (rightValue == string.Intern("null"))
+                    {
+                        rightValueTyped = null;
+                    }
+                    else
+                    {
 
-                leftExpression = Expression.PropertyOrField(t, propName);
+                        rightValueTyped = Convert.ChangeType(rightValue, prop.PropertyType);
+
+                    }
+
+                    leftExpression = Expression.PropertyOrField(t, propName);
+                }
             }
 
             ConstantExpression rightExpression = Expression.Constant(rightValueTyped);
@@ -84,6 +112,22 @@ namespace predicate.builder.net
             }
 
             throw new NotImplementedException();
+        }
+
+        static LambdaExpression CreateExpression(string propertyName, Type type)
+        {
+            var param = Expression.Parameter(type, "x");
+            Expression body = param;
+            foreach (var member in propertyName.Split('.'))
+            {
+                body = Expression.PropertyOrField(body, member);
+            }
+            return Expression.Lambda(body, param);
+        }
+
+        private static PropertyInfo GetProperty(string propName, Type type)
+        {
+            return type.GetProperty(propName);
         }
 
         /// <summary>
