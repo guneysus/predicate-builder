@@ -44,19 +44,32 @@ namespace predicate.builder.net
             var (propName, @operator, rightValue) = new ValueTuple<string, string, string>(tokens.ElementAt(0),
                 tokens.ElementAt(1), tokens.ElementAt(2));
 
-            PropertyInfo prop = typeof(T).GetProperty(propName); // TODO GetMember, GetField or GetProperty
-            object rightValueTyped = Convert.ChangeType(rightValue, prop.PropertyType);
-            MemberExpression memberExpr = Expression.PropertyOrField(t, propName);
-            ConstantExpression right = Expression.Constant(rightValueTyped);
+            Type type = typeof(T);
+            PropertyInfo prop = type.GetProperty(propName); // TODO GetMember, GetField or GetProperty
+            object rightValueTyped = default(object);
+            Expression leftExpression;
+
+            if (propName == string.Intern("@"))
+            {
+                rightValueTyped = Convert.ChangeType(rightValue, type);
+                leftExpression = t;
+            }
+            else
+            {
+                rightValueTyped = Convert.ChangeType(rightValue, prop.PropertyType);
+                leftExpression = Expression.PropertyOrField(t, propName);
+            }
+
+            ConstantExpression rightExpression = Expression.Constant(rightValueTyped);
 
             switch (@operator)
             {
-                case "=": return Expression.Equal(memberExpr, right);
-                case "!=": return Expression.NotEqual(memberExpr, right);
-                case "<": return Expression.LessThan(memberExpr, right);
-                case "<=": return Expression.LessThanOrEqual(memberExpr, right);
-                case ">": return Expression.GreaterThan(memberExpr, right);
-                case ">=": return Expression.GreaterThanOrEqual(memberExpr, right);
+                case "=": return Expression.Equal(leftExpression, rightExpression);
+                case "!=": return Expression.NotEqual(leftExpression, rightExpression);
+                case "<": return Expression.LessThan(leftExpression, rightExpression);
+                case "<=": return Expression.LessThanOrEqual(leftExpression, rightExpression);
+                case ">": return Expression.GreaterThan(leftExpression, rightExpression);
+                case ">=": return Expression.GreaterThanOrEqual(leftExpression, rightExpression);
                 default:
                     throw new NotImplementedException();
                     break;
