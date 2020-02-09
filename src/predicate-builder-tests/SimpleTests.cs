@@ -27,7 +27,8 @@ namespace predicate_builder_tests
         [ClassData(typeof(ComplexQueriesPersonTestDataGenerator))]
         public void Complex_Queries(string command, Person person, bool expected)
         {
-            Assert.Equal(expected, PredicateHelper.Create<Person>(command)(person));
+            Func<Person, bool> predicate = PredicateHelper.Create<Person>(command);
+            Assert.Equal(expected, predicate(person));
         }
 
 
