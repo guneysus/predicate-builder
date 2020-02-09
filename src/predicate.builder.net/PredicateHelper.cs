@@ -44,14 +44,15 @@ namespace predicate.builder.net
             var (propName, @operator, rightValue) = new ValueTuple<string, string, string>(tokens.ElementAt(0),
                 tokens.ElementAt(1), tokens.ElementAt(2));
 
-            Type type = typeof(T);
-            PropertyInfo prop = GetProperty(propName, type);
+            Type parameterType = typeof(T);
             object rightValueTyped = default(object);
+            Type rightValueMemberType = parameterType;
+
             Expression leftExpression = default(Expression);
 
             if (propName == string.Intern("@"))
             {
-                rightValueTyped = Convert.ChangeType(rightValue, type);
+                rightValueTyped = Convert.ChangeType(rightValue, rightValueMemberType);
                 leftExpression = t;
             }
             else
@@ -68,28 +69,25 @@ namespace predicate.builder.net
                         leftExpression = Expression.PropertyOrField(leftExpression, member);
                     }
 
-                    Type lastMemberType = typeof(T);
-
-
                     for (int i = 0; i < nestedProps.Length; i++)
                     {
                         string nestedPropname = nestedProps.Skip(i).First();
-                        lastMemberType = GetProperty(nestedPropname, lastMemberType).PropertyType;
+                        rightValueMemberType = GetProperty(nestedPropname, rightValueMemberType).PropertyType;
                     }
 
-                    rightValueTyped = Convert.ChangeType(rightValue, lastMemberType);
+                    rightValueTyped = Convert.ChangeType(rightValue, rightValueMemberType);
                 }
                 else
                 {
+                    rightValueMemberType = GetProperty(propName, parameterType).PropertyType;
+
                     if (rightValue == string.Intern("null"))
                     {
                         rightValueTyped = null;
                     }
                     else
                     {
-
-                        rightValueTyped = Convert.ChangeType(rightValue, prop.PropertyType);
-
+                        rightValueTyped = Convert.ChangeType(rightValue, rightValueMemberType);
                     }
 
                     leftExpression = Expression.PropertyOrField(t, propName);
