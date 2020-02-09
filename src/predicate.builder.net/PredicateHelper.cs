@@ -56,7 +56,15 @@ namespace predicate.builder.net
             }
             else
             {
-                rightValueTyped = Convert.ChangeType(rightValue, prop.PropertyType);
+                if (rightValue == string.Intern("null"))
+                {
+                    rightValueTyped = null;
+                }
+                else
+                {
+                    rightValueTyped = Convert.ChangeType(rightValue, prop.PropertyType);
+                }
+
                 leftExpression = Expression.PropertyOrField(t, propName);
             }
 
