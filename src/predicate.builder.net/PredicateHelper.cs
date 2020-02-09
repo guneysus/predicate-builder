@@ -87,7 +87,10 @@ namespace predicate.builder.net
         {
             string AND = string.Intern("AND");
 
-            return command.Split(new string[] { AND }, StringSplitOptions.RemoveEmptyEntries);
+            var result = command
+                .Split(new string[] { AND }, StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => x.Trim());
+            return result;
         }
     }
 }
