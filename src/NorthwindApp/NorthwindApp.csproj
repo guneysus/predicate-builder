@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Entities\Category.cs" />
+    <Compile Remove="Entities\Customer.cs" />
+    <Compile Remove="Entities\Employee.cs" />
+    <Compile Remove="Entities\EmployeeTerritory.cs" />
+    <Compile Remove="Entities\Order.cs" />
+    <Compile Remove="Entities\OrderDetail.cs" />
+    <Compile Remove="Entities\Region.cs" />
+    <Compile Remove="Entities\Shipper.cs" />
+    <Compile Remove="Entities\Supplier.cs" />
+    <Compile Remove="Entities\Territory.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="2.2.6" />
+  </ItemGroup>
+
+</Project>
