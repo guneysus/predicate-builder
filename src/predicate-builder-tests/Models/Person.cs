@@ -17,7 +17,7 @@ namespace predicate_builder_tests.Models
             int Id = default(int), 
             string Name = default(string), 
             int Age = default(int), 
-            DateTime Birthdate =default(DateTime), 
+            DateTime Birthdate = default(DateTime), 
             decimal Salary = default(decimal))
         {
             return new Person()

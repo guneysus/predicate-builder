@@ -15,7 +15,17 @@ namespace predicate.builder.net
             ParameterExpression parameters = Expression.Parameter(typeof(T), PARAMETER_NAME);
             IEnumerable<string> andBranches = AndBranches(command);
             IEnumerable<Expression> childExpressions = ChildExpressions<T>(andBranches, parameters);
-            BinaryExpression combinedExpression = (BinaryExpression)childExpressions.Aggregate(Expression.AndAlso);
+            Expression combinedExpression;
+
+            if (childExpressions.Any())
+            {
+                combinedExpression = childExpressions.Aggregate(Expression.AndAlso);
+            }
+            else
+            {
+                combinedExpression = Expression.Constant(true, typeof(bool));
+            }
+
             Expression<Func<T, bool>> expression = Expression.Lambda<Func<T, bool>>(combinedExpression, parameters);
             return expression.Compile();
         }
@@ -38,7 +48,7 @@ namespace predicate.builder.net
         }
 
 
-        static Expression ExpressionFactory<T>(IEnumerable<string> tokens, ParameterExpression t)
+        static Expression ExpressionFactory<T>(IEnumerable<string> tokens, ParameterExpression parameter)
         {
             // TODO Support for two tokens commands like `x IsNull` or `x IsNotNull`
             var (propName, @operator, rightValue) = new ValueTuple<string, string, string>(tokens.ElementAt(0),
@@ -53,7 +63,7 @@ namespace predicate.builder.net
             if (propName == string.Intern("@"))
             {
                 rightValueTyped = Convert.ChangeType(rightValue, rightValueMemberType);
-                leftExpression = t;
+                leftExpression = parameter;
             }
             else
             {
@@ -63,9 +73,10 @@ namespace predicate.builder.net
 
                 if (nestedProps.Count() > 1)
                 {
-                    leftExpression = t;
-                    foreach (var member in nestedProps)
-                    {
+                    leftExpression = parameter;
+                    Type leftExpressionType = parameterType;
+                    foreach (string member in nestedProps)
+                    {                       
                         leftExpression = Expression.PropertyOrField(leftExpression, member);
                     }
 
@@ -90,7 +101,7 @@ namespace predicate.builder.net
                         rightValueTyped = Convert.ChangeType(rightValue, rightValueMemberType);
                     }
 
-                    leftExpression = Expression.PropertyOrField(t, propName);
+                    leftExpression = Expression.PropertyOrField(parameter, propName);
                 }
             }
 
@@ -112,7 +123,7 @@ namespace predicate.builder.net
             throw new NotImplementedException();
         }
 
-        static LambdaExpression CreateExpression(string propertyName, Type type)
+        private static LambdaExpression CreateExpression(string propertyName, Type type)
         {
             var param = Expression.Parameter(type, "x");
             Expression body = param;
@@ -128,6 +139,27 @@ namespace predicate.builder.net
             return type.GetProperty(propName);
         }
 
+        private static bool HasProperty(string propName, Type type)
+        {
+            return GetProperty(propName, type) != null;
+        }
+
+        private static bool HasProperty<T>(string propName)
+        {
+            return GetProperty(propName, typeof(T)) != null;
+        }
+
+        private static bool IsNullable(Type type)
+        {
+            return type.GetGenericTypeDefinition() == typeof(Nullable<>);
+        }
+
+
+        private static bool IsNullable<T>()
+        {
+            return typeof(T).GetGenericTypeDefinition() == typeof(Nullable<>);
+        }
+
         /// <summary>
         /// Split AND commands
         /// </summary>
@@ -136,6 +168,7 @@ namespace predicate.builder.net
         static IEnumerable<string> AndBranches(string command)
         {
             string AND = string.Intern("AND");
+            command = command ?? string.Empty;
 
             var result = command
                 .Split(new string[] { AND }, StringSplitOptions.RemoveEmptyEntries)
