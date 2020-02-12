@@ -2,6 +2,8 @@
 {
     public class EmployeeTerritory
     {
+        public int Id { get; set; }
+
         public int EmployeeId { get; set; }
         public string TerritoryId { get; set; }
 

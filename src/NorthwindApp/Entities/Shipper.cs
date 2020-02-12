@@ -9,7 +9,7 @@ namespace Northwind.Domain.Entities
             Orders = new HashSet<Order>();
         }
 
-        public int ShipperId { get; set; }
+        public int Id { get; set; }
         public string CompanyName { get; set; }
         public string Phone { get; set; }
 

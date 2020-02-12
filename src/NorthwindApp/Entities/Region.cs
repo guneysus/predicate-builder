@@ -6,12 +6,12 @@ namespace Northwind.Domain.Entities
     {
         public Region()
         {
-            Territories = new HashSet<Territory>();
+            //Territories = new HashSet<Territory>();
         }
 
-        public int RegionId { get; set; }
+        public int Id { get; set; }
         public string RegionDescription { get; set; }
 
-        public ICollection<Territory> Territories { get; private set; }
+        //public ICollection<Territory> Territories { get; private set; }
     }
 }

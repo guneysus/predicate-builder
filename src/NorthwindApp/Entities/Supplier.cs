@@ -6,10 +6,10 @@ namespace Northwind.Domain.Entities
     {
         public Supplier()
         {
-            Products = new HashSet<Product>();
+            //Products = new HashSet<Product>();
         }
 
-        public int SupplierId { get; set; }
+        public int Id { get; set; }
         public string CompanyName { get; set; }
         public string ContactName { get; set; }
         public string ContactTitle { get; set; }
@@ -22,6 +22,6 @@ namespace Northwind.Domain.Entities
         public string Fax { get; set; }
         public string HomePage { get; set; }
 
-        public ICollection<Product> Products { get; private set; }
+        //public ICollection<Product> Products { get; private set; }
     }
 }
