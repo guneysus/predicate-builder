@@ -1,4 +1,5 @@
 ﻿using predicate.builder.net;
+using System;
 using Xunit;
 
 namespace predicate_builder_tests
@@ -44,5 +45,27 @@ namespace predicate_builder_tests
         {
             Assert.Equal(expected, PredicateHelper.Create<int>(q)(val));
         }
+
+
+        [Fact]
+        public void Datetime_Tests()
+        {
+            var foo = new Foo()
+            {
+                DateTime = new DateTime(2000, 12, 31),
+            };
+
+            Assert.True(PredicateHelper.Create<Foo>("DateTime.Year = 2000")(foo));
+            Assert.True(PredicateHelper.Create<Foo>("NullableDateTimeNull = null")(foo));
+            Assert.True(PredicateHelper.Create<Foo>("NullableDateTimeHasValue.Year = 2000")(foo));
+        }
+
+        class Foo
+        {
+            public DateTime DateTime { get; set; }
+            public DateTime? NullableDateTimeNull => null;
+            public DateTime? NullableDateTimeHasValue => DateTime;
+        }
+
     }
 }

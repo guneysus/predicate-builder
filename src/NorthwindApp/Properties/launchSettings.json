@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "NorthwindApp": {
+      "commandName": "Project"
+    },
+    "Console": {
+      "commandName": "Project"
+    }
+  }
+}

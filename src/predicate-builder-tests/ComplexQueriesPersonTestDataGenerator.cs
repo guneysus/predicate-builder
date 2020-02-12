@@ -18,6 +18,7 @@ namespace predicate_builder_tests
             new object[] { "Age >= 18 AND Age <= 30", Person.New(Age : 17), false },
             new object[] { "Age >= 18 AND Age <= 30", Person.New(Age : 31), false },
             new object[] { "Birthdate.Year = 2000", Person.New(Birthdate: new DateTime(2000, 1,1)), true },
+            new object[] { "Birthdate.Year = 2000", Person.New(Birthdate: new DateTime(2000, 1,1)), true },
             new object[] { "Birthdate.Year <= 1989", Person.New(Birthdate: new DateTime(1989, 1,1)), true },
             new object[] { "Birthdate.Year <= 1989", Person.New(Birthdate: new DateTime(1988, 1,1)), true },
             new object[] { "Birthdate.Year <= 1989", Person.New(Birthdate: new DateTime(1990, 1,1)), false },
