@@ -40,6 +40,12 @@ namespace predicate_builder_tests
             Assert.False(PredicateHelper.Create<Person>("Name != null")(Person.New(Name: null)));
         }
 
+        [Fact(DisplayName = "String Tests")]
+        public void String_Tests()
+        {
+            Assert.True(PredicateHelper.Create<Person>("Name = \"Ahmed Þeref\"")(Person.New(Name: "Ahmed Þeref")));
+        }
+
         [Fact]
         public void Defense_Null_And_Empty ()
         {
