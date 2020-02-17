@@ -56,8 +56,7 @@ namespace predicate_builder_tests
             };
 
             Assert.True(PredicateHelper.Create<Foo>("DateTime.Year = 2000")(foo));
-            Assert.True(PredicateHelper.Create<Foo>("NullableDateTimeNull = null")(foo));
-            Assert.True(PredicateHelper.Create<Foo>("NullableDateTimeHasValue.Year = 2000")(foo));
+            Assert.True(PredicateHelper.Create<Foo>("NullableDateTimeNull = null")(foo));            Assert.True(PredicateHelper.Create<Foo>("NullableDateTimeHasValue.Year = 2000")(foo));
         }
 
         class Foo

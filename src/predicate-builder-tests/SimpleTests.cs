@@ -43,7 +43,7 @@ namespace predicate_builder_tests
         [Fact(DisplayName = "String Tests")]
         public void String_Tests()
         {
-            Assert.True(PredicateHelper.Create<Person>("Name = \"Ahmed Þeref\"")(Person.New(Name: "Ahmed Þeref")));
+            Assert.True(PredicateHelper.Create<Person>("Name = Ahmed Þeref")(Person.New(Name: "Ahmed Þeref")));
         }
 
         [Fact]

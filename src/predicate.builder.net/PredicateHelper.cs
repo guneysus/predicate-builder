@@ -36,7 +36,17 @@ namespace predicate.builder.net
         /// </summary>
         /// <param name="command"></param>
         /// <returns></returns>
-        static IEnumerable<string> Tokens(string command) => command.Split();
+        static IEnumerable<string> Tokens(string command)
+        {
+            string[] tokens = command.Split();
+            string[] result = new string[] {
+                tokens.First(),
+                tokens.Skip(1).Take(1).First(),
+                string.Join(" ", tokens.Skip(2))
+            };
+
+            return result;
+        }
 
         static IEnumerable<Expression> ChildExpressions<T>(IEnumerable<string> commands, ParameterExpression t)
         {
@@ -151,13 +161,14 @@ namespace predicate.builder.net
 
         private static bool IsNullable(Type type)
         {
-            return type.GetGenericTypeDefinition() == typeof(Nullable<>);
+            return type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
         }
 
 
         private static bool IsNullable<T>()
         {
-            return typeof(T).GetGenericTypeDefinition() == typeof(Nullable<>);
+            Type type = typeof(T);
+            return IsNullable(type);
         }
 
         /// <summary>
