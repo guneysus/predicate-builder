@@ -28,7 +28,7 @@ namespace NorthwindApp
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite(@"Data Source=D:\repos\predicate-builder\data\Northwind_small.sqlite;");
+            optionsBuilder.UseSqlite(@"Data Source=..\..\data\Northwind_small.sqlite;");
 
             optionsBuilder.UseLoggerFactory(MyLoggerFactory);
 

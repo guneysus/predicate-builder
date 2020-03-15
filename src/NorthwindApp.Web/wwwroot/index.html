@@ -3,9 +3,131 @@
 <head>
     <meta charset="utf-8" />
     <title>:: predicate builder northwind database example ::</title>
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.8.0/css/bulma.min.css"
+          integrity="sha256-D9M5yrVDqFlla7nlELDaYZIpXfFWDytQtiV+TaH6F1I=" crossorigin="anonymous" />
+
+    <script src="https://unpkg.com/ag-grid-community/dist/ag-grid-community.min.noStyle.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/ag-grid-community/dist/styles/ag-grid.css">
+    <link rel="stylesheet" href="https://unpkg.com/ag-grid-community/dist/styles/ag-theme-balham.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qs/6.9.1/qs.min.js" integrity="sha256-beatjfLUCSs1ZrcMYMM5MobVQ/ch4tSvReZmr3L9rtI=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.2/axios.min.js" integrity="sha256-T/f7Sju1ZfNNfBh7skWn0idlCBcI3RwdLSS4/I7NQKQ=" crossorigin="anonymous"></script>
+    <script src="app.js"></script>
 </head>
 <body>
 
-aa
+
+    <!--<section class="section">
+        <div class="container">
+            <h1 class="title">Section</h1>
+            <h2 class="subtitle">
+                A simple container to divide your page into <strong>sections</strong>, like the one you're currently reading
+            </h2>
+        </div>
+    </section>-->
+
+    <section class="section">
+        <div class="container ">
+            <div class="tile is-ancestor">
+                <div class="tile is-4 is-vertical is-parent">
+                    <div class="tile is-child">
+                        <p class="title">Query</p>
+                        <p><!--Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ornare magna eros, eu pellentesque tortor vestibulum ut. Maecenas non massa sem. Etiam finibus odio quis feugiat facilisis.--></p>
+
+                        <div class="field">
+                            <label class="label">Query</label>
+                            <div class="control">
+                                <textarea name="query" class="textarea is-primary" placeholder="Textarea"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="field is-grouped">
+                            <div class="control">
+                                <button class="button is-link" onclick="submit()">Submit</button>
+                            </div>
+                            <div class="control">
+                                <button class="button is-link is-light">Cancel</button>
+                            </div>
+                            <div class="control">
+                                <!-- https://stackoverflow.com/a/31613889/1766716 -->
+                                <button class="button is-link is-light" onclick="window.clear()">Clear</button>
+                            </div>
+                        </div>
+
+
+                        <div class="field is-grouped">
+                            <div class="control">
+                                <button class="button" data-query="Id = 1" onclick="updateQuery(this)">Submit</button>
+                            </div>
+
+                            <div class="control">
+                                <button class="button" data-query="Id <= 10" onclick="updateQuery(this)">Submit</button>
+                            </div>
+                        </div>
+
+                        <div class="field is-grouped">
+                            <div class="control">
+                                <button class="button" data-query="ProductName = Chai" onclick="updateQuery(this)">Submit</button>
+                            </div>
+                        </div>
+
+                        <div class="field is-grouped">
+                            <div class="control">
+                                <button class="button" data-query="UnitPrice.Value < 100 AND UnitsInStock.Value < 10" onclick="updateQuery(this)">Submit</button>
+                            </div>
+                        </div>
+
+                        <div class="field is-grouped">
+  
+                            <div class="control">
+                                <button class="button" data-query="UnitPrice.Value > 50" onclick="updateQuery(this)">Submit</button>
+                            </div>
+                        </div>
+
+                        <div class="field is-grouped">
+                            <div class="control">
+                                <button class="button" data-query="UnitPrice = null" onclick="updateQuery(this)">Submit</button>
+                            </div>
+                        </div>
+
+                        <div class="field is-grouped">
+                            <div class="control">
+                                <button class="button" data-query="UnitsInStock.Value = 0" onclick="updateQuery(this)">Submit</button>
+                            </div>
+                        </div>
+
+                        <div class="field is-grouped">
+                            <div class="control">
+                                <button class="button" data-query="UnitsInStock.Value = 0" onclick="updateQuery(this)">Submit</button>
+                            </div>
+                        </div>
+
+                        <div class="field is-grouped">
+                            <div class="control">
+                                <button class="button" data-query="Discontinued = true" onclick="updateQuery(this)">Submit</button>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    <div class="tile is-child">
+                        <!--<p class="title">Two</p>
+                        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin ornare magna eros, eu pellentesque tortor vestibulum ut. Maecenas non massa sem. Etiam finibus odio quis feugiat facilisis.</p>-->
+                    </div>
+                </div>
+                <div class="tile  is-parent">
+                    <div class="tile is-child">
+                        <p class="title">Results</p>
+                        <!--<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam semper diam at erat pulvinar, at pulvinar felis blandit. Vestibulum volutpat tellus diam, consequat gravida libero rhoncus ut. Morbi maximus, leo sit amet vehicula eleifend, nunc dui porta orci, quis semper odio felis ut quam.</p>
+    <p>Suspendisse varius ligula in molestie lacinia. Maecenas varius eget ligula a sagittis. Pellentesque interdum, nisl nec interdum maximus, augue diam porttitor lorem, et sollicitudin felis neque sit amet erat. Maecenas imperdiet felis nisi, fringilla luctus felis hendrerit sit amet. Aenean vitae gravida diam, finibus dignissim turpis. Sed eget varius ligula, at volutpat tortor.</p>
+    <p>Integer sollicitudin, tortor a mattis commodo, velit urna rhoncus erat, vitae congue lectus dolor consequat libero. Donec leo ligula, maximus et pellentesque sed, gravida a metus. Cras ullamcorper a nunc ac porta. Aliquam ut aliquet lacus, quis faucibus libero. Quisque non semper leo.</p>-->
+
+                        <div id="myGrid" style="height: 800px" class="ag-theme-balham"></div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 </body>
 </html>
