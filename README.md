@@ -1,4 +1,4 @@
 # predicate-builder
 Predicate Builder
 
-![screencast](docs/videos/munbHo0xqT.mp4)
+![screencast](docs/videos/munbHo0xqT.gif)
