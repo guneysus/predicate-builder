@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "dql.tests": {
+      "commandName": "Project",
+      "workingDirectory": "..\\..\\..\\data"
+    }
+  }
+}

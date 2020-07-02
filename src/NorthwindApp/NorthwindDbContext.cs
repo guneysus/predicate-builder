@@ -18,6 +18,13 @@ namespace NorthwindApp
 
         }
 
+        public NorthwindDbContext(string connectionString)
+        {
+            this.ConnectionString = connectionString;
+        }
+
+        private string ConnectionString = @"Data Source=..\..\data\Northwind_small.sqlite;";
+
         public static readonly LoggerFactory MyLoggerFactory
             = new LoggerFactory(new[]
             {
@@ -28,7 +35,7 @@ namespace NorthwindApp
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite(@"Data Source=..\..\data\Northwind_small.sqlite;");
+            optionsBuilder.UseSqlite(ConnectionString);
 
             optionsBuilder.UseLoggerFactory(MyLoggerFactory);
 
