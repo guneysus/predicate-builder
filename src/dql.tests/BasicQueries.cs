@@ -20,10 +20,10 @@ namespace dql.tests
         public void SimpleSelect()
         {
             var pwd = Environment.CurrentDirectory;
-            var query = "select * from Products;";
+            var query = "select * from Product;";
             var parser = new dql.Dql();
 
-            var (context, str) = parser.Parse(query);
+            var (context, str) = parser.Parse(query, _db);
             var tableName = context.selectAllFromTable().TABLE_NAME().GetText();
 
             try

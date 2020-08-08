@@ -8,12 +8,13 @@ using Antlr4.Runtime.Sharpen;
 using Serilog;
 using Serilog.Core;
 using Antlr4.Runtime.Dfa;
+using NorthwindApp;
 
 namespace dql
 {
     public class Dql
     {
-        public (DqlParser.StartRuleContext, string) Parse(string input)
+        public (DqlParser.StartRuleContext, string) Parse(string input, NorthwindDbContext dbContext)
         {
             var stream = new AntlrInputStream(input);
             var lexer = new DqlLexer(stream);
@@ -24,7 +25,7 @@ namespace dql
 
             DqlParser.StartRuleContext startRuleContext = parser.startRule();
 
-            var listener = new DefaultListener(parser);
+            var listener = new DefaultListener(parser, dbContext);
             var errorListener = new DefaultErrorListener();
 
             parser.AddParseListener(listener);
